@@ -60,11 +60,11 @@ spec:
             proxy:
               disabled: true
             extraManifests:
+              - http://192.168.4.1/cilium.yaml
               - http://192.168.4.1/kubelet-serving-cert-approver.yaml
               - http://192.168.4.1/metrics-server.yaml
               - http://192.168.4.1/piraeus-operator.yaml
               - http://192.168.4.1/gateway-api.yaml
-              - http://192.168.4.1/cilium.yaml
               - http://192.168.4.1/flux.yaml
               - http://192.168.4.1/flux-instance-observability.yaml
             externalCloudProvider:
