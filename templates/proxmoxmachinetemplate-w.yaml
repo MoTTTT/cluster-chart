@@ -1,0 +1,31 @@
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
+kind: ProxmoxMachineTemplate
+metadata:
+  name: "{{ .Values.cluster.name }}-worker"
+  namespace: "{{ .Values.cluster.name }}"
+  labels:
+    {{- include "cluster-chart.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      sourceNode: "{{ .Values.proxmox.template.sourcenode }}"
+      templateID: "{{ .Values.proxmox.template.template-vmid }}"
+      disks:
+        bootVolume:
+          disk: "{{ .Values.proxmox.vm.boot-volume-device }}"
+          sizeGb: "{{ .Values.worker.boot-volume-size }}"
+      format: qcow2
+      full: true
+      memoryMiB: "{{ .Values.worker.memory-mib }}"
+      network:
+        default:
+          bridge: "{{ .Values.proxmox.vm.bridge }}"
+          model: virtio
+      numCores: "{{ .Values.worker.num-cores }}"
+      numSockets: "{{ .Values.worker.num-sockets }}"
+      checks:
+        skipCloudInitStatus: true
+        skipQemuGuestAgent: true
+      metadataSettings:
+        providerIDInjection: true

@@ -1,0 +1,14 @@
+# This chart assumes a specific configuration of the Cluster API managed Cluster.
+# The appVersion therefore signifies the configuration of the Cluster API managed Cluster.
+# This in turn includes the providers (and their versions) used in the management cluster.
+# V1.0.0 Configuration
+# - Infrastructure Provider: Proxmox
+# - Cluster Provider: Talos
+# - Bootstrap Provider: Talos
+# - IPAM Provider: In Cluster
+apiVersion: v2
+name: cluster-chart
+description: A Helm chart to generate Cluster API managed Cluster manifests.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

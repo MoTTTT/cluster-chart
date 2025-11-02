@@ -1,0 +1,1 @@
+Cluster API resources have been created in the {{ .Values.cluster.name }} namespace.

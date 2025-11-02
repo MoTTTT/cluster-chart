@@ -1,0 +1,63 @@
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
+kind: TalosConfigTemplate
+metadata:
+  name: talosconfig-worker
+  namespace: "{{ .Values.cluster.name }}"
+  labels:
+    cluster-name: "{{ .Values.cluster.name }}"
+    {{- include "cluster-chart.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      generateType: worker
+      talosVersion: v1.10
+      strategicPatches:
+        - |
+          machine:
+            install:
+              disk: /dev/vda
+              image: factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.1
+            registries:
+              config:
+                harbor.podzone.cloud:
+                  auth:
+                    username: admin
+                    password: Harbor12345
+              mirrors:
+                docker.io:
+                  endpoints:
+                    - http://harbor.podzone.cloud/v2/proxy-docker.io
+                  overridePath: true
+                ghcr.io:
+                  endpoints:
+                    - http://harbor.podzone.cloud/v2/proxy-ghcr.io
+                  overridePath: true
+                gcr.io:
+                  endpoints:
+                    - http://harbor.podzone.cloud/v2/proxy-gcr.io
+                  overridePath: true
+                registry.k8s.io:
+                  endpoints:
+                    - http://harbor.podzone.cloud/v2/proxy-registry.k8s.io
+                  overridePath: true
+                quay.io:
+                  endpoints:
+                    - http://harbor.podzone.cloud/v2/proxy-quay.io
+                  overridePath: true
+                cr.fluentbit.io:
+                  endpoints:
+                    - http://harbor.podzone.cloud/v2/proxy-cr.fluentbit.io
+                  overridePath: true
+            sysctls:
+              vm.max_map_count: 262144
+            kernel:
+              modules:
+                - name: drbd
+                  parameters:
+                    - usermode_helper=disabled
+                - name: drbd_transport_tcp
+            kubelet:
+              extraArgs:
+                rotate-server-certificates: true
+                cloud-provider: external
