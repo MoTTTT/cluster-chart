@@ -8,7 +8,7 @@ metadata:
     {{- include "cluster-chart.labels" . | nindent 4 }}
 spec:
   clusterName: "{{ .Values.cluster.name }}"
-  replicas: "{{ .Values.workers.machine-count }}"
+  replicas: "{{ .Values.worker.machine_count }}"
   selector:
     matchLabels: null
   template:
@@ -25,4 +25,4 @@ spec:
         kind: ProxmoxMachineTemplate
         name: "{{ .Values.cluster.name }}-worker"
         namespace: "{{ .Values.cluster.name }}"
-      version: "{{ .Values.cluster.kubernetes-version }}"
+      version: "{{ .Values.cluster.kubernetes_version }}"

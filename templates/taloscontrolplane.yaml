@@ -7,8 +7,8 @@ metadata:
   labels:
     {{- include "cluster-chart.labels" . | nindent 4 }}
 spec:
-  version: "{{ .Values.cluster.kubernetes-version }}"
-  replicas: "{{ .Values.controlplane.machine-count }}"
+  version: "{{ .Values.cluster.kubernetes_version }}"
+  replicas: "{{ .Values.controlplane.machine_count }}"
   infrastructureTemplate:
     kind: ProxmoxMachineTemplate
     apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
@@ -26,41 +26,10 @@ spec:
                 - deviceSelector:
                     physical: true
                   vip:
-                    ip: {{ .Values.controlplane.endpoint-ip }}
+                    ip: {{ .Values.controlplane.endpoint_ip }}
             install:
               disk: /dev/vda
-              image: factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.1
-            registries:
-              config:
-                harbor.podzone.cloud:
-                  auth:
-                    username: admin
-                    password: Harbor12345
-              mirrors:
-                docker.io:
-                  endpoints:
-                    - https://harbor.podzone.cloud/v2/proxy-docker.io
-                  overridePath: true
-                ghcr.io:
-                  endpoints:
-                    - http://harbor.podzone.cloud/v2/proxy-ghcr.io
-                  overridePath: true
-                gcr.io:
-                  endpoints:
-                    - http://harbor.podzone.cloud/v2/proxy-gcr.io
-                  overridePath: true
-                registry.k8s.io:
-                  endpoints:
-                    - http://harbor.podzone.cloud/v2/proxy-registry.k8s.io
-                  overridePath: true
-                quay.io:
-                  endpoints:
-                    - http://harbor.podzone.cloud/v2/proxy-quay.io
-                  overridePath: true
-                cr.fluentbit.io:
-                  endpoints:
-                    - http://harbor.podzone.cloud/v2/proxy-cr.fluentbit.io
-                  overridePath: true
+              image: {{ .Values.cluster.image }}
             kernel:
               modules:
                 - name: drbd
@@ -83,8 +52,8 @@ spec:
           cluster:
             apiServer:
               certSANs:
-                - {{ .Values.network.bastion-host-endpoint-ip }}
-                - {{ .Values.network.bastion-host }}
+                - {{ .Values.network.bastion_host_endpoint_ip }}
+                - {{ .Values.network.bastion_host }}
             network:
               cni:
                 name: none

@@ -2,39 +2,40 @@
 
 cluster:
   name: "cluster09"
-  kubernetes-version: "v1.32.0"
+  kubernetes_version: "v1.32.0"
+  image: "factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.1"
 
 network:
-  ip-ranges: "[192.168.4.101-192.168.4.107]"
-  ip-prefix: "24"
+  ip_ranges: "[192.168.4.101-192.168.4.107]"
+  ip_prefix: "24"
   gateway: "192.168.4.1"
-  bastion-host: "freyr"
-  bastion-host-endpoint-ip: "192.168.1.80"
-  dns-servers: "[192.168.1.201]"
+  bastion_host: "freyr"
+  bastion_host_endpoint_ip: "192.168.1.80"
+  dns_servers: "[192.168.1.201]"
 
 controlplane:
-  endpoint-ip: "192.168.4.100"
-  machine-count: 1
-  boot-volume-size: 40
-  num-cores: 4
-  num-sockets: 4
-  memory-mib: 16384
+  endpoint_ip: "192.168.4.100"
+  machine_count: 1
+  boot_volume_size: 40
+  num_cores: 4
+  num_sockets: 4
+  memory_mib: 16384
 
-workers:
-  machine-count: 1
-  boot-volume-size: 140
-  num-cores: 4
-  num-sockets: 4
-  memory-mib: 16384
+worker:
+  machine_count: 1
+  boot_volume_size: 140
+  num_cores: 4
+  num_sockets: 4
+  memory_mib: 16384
 
 proxmox:
   url: "https://proxmox:8006"
   token: "Token name"
-  allowed-nodes: "[venus]"
+  allowed_nodes: "[venus]"
   secret: "Token value"
   template:
     sourcenode: "venus"
-    template-vmid: "100"
+    template_vmid: "100"
   vm:
-    boot-volume-device: "virtio0"
+    boot_volume_device: "virtio0"
     bridge: "vmbr0"

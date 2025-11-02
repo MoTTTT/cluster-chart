@@ -10,20 +10,20 @@ spec:
   template:
     spec:
       sourceNode: "{{ .Values.proxmox.template.sourcenode }}"
-      templateID: "{{ .Values.proxmox.template.template-vmid }}"
+      templateID: "{{ .Values.proxmox.template.template_vmid }}"
       disks:
         bootVolume:
-          disk: "{{ .Values.proxmox.vm.boot-volume-device }}"
-          sizeGb: "{{ .Values.controlplane.boot-volume-size }}"
+          disk: "{{ .Values.proxmox.vm.boot_volume_device }}"
+          sizeGb: "{{ .Values.controlplane.boot_volume_size }}"
       format: qcow2
       full: true
-      memoryMiB: "{{ .Values.controlplane.memory-mib }}"
+      memoryMiB: "{{ .Values.controlplane.memory_mib }}"
       network:
         default:
           bridge: "{{ .Values.proxmox.vm.bridge }}"
           model: virtio
-      numCores: "{{ .Values.controlplane.num-cores }}"
-      numSockets: "{{ .Values.controlplane.num-sockets }}"
+      numCores: "{{ .Values.controlplane.num_cores }}"
+      numSockets: "{{ .Values.controlplane.num_sockets }}"
       checks:
         skipCloudInitStatus: true
         skipQemuGuestAgent: true
