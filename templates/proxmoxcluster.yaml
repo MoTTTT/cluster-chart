@@ -20,4 +20,4 @@ spec:
     prefix: "{{ .Values.network.ip_prefix }}"
   credentialsRef:
     name: capmox-manager-credentials
-    namespace: "{{ .Values.cluster.name }}"
+    namespace: capmox-system
