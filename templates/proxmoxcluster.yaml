@@ -11,13 +11,13 @@ spec:
     memoryAdjustment: 0
   allowedNodes: {{ .Values.proxmox.allowed_nodes }}
   controlPlaneEndpoint:
-    host: "{{ .Values.controlplane.endpoint_ip }}"
+    host: {{ .Values.controlplane.endpoint_ip }}
     port: 6443
   dnsServers: {{ .Values.network.dns_servers }}
   ipv4Config:
     addresses: {{ .Values.network.ip_ranges }}
-    gateway: "{{ .Values.network.gateway }}"
-    prefix: "{{ .Values.network.ip_prefix }}"
+    gateway: {{ .Values.network.gateway }}
+    prefix: {{ .Values.network.ip_prefix }}
   credentialsRef:
     name: capmox-manager-credentials
     namespace: capmox-system

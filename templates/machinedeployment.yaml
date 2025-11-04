@@ -25,4 +25,4 @@ spec:
         kind: ProxmoxMachineTemplate
         name: "{{ .Values.cluster.name }}-worker"
         namespace: "{{ .Values.cluster.name }}"
-      version: "{{ .Values.cluster.kubernetes_version }}"
+      version: {{ .Values.cluster.kubernetes_version }}

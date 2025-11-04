@@ -7,8 +7,8 @@ metadata:
   labels:
     {{- include "cluster-chart.labels" . | nindent 4 }}
 spec:
-  version: "{{ .Values.cluster.kubernetes_version }}"
-  replicas: "{{ .Values.controlplane.machine_count }}"
+  version: {{ .Values.cluster.kubernetes_version }}
+  replicas: {{ .Values.controlplane.machine_count }}
   infrastructureTemplate:
     kind: ProxmoxMachineTemplate
     apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1

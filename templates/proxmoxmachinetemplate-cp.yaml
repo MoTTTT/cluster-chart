@@ -9,21 +9,21 @@ metadata:
 spec:
   template:
     spec:
-      sourceNode: "{{ .Values.proxmox.template.sourcenode }}"
-      templateID: "{{ .Values.proxmox.template.template_vmid }}"
+      sourceNode: {{ .Values.proxmox.template.sourcenode }}
+      templateID: {{ .Values.proxmox.template.template_vmid }}
       disks:
         bootVolume:
-          disk: "{{ .Values.proxmox.vm.boot_volume_device }}"
-          sizeGb: "{{ .Values.controlplane.boot_volume_size }}"
+          disk: {{ .Values.proxmox.vm.boot_volume_device }}
+          sizeGb: {{ .Values.controlplane.boot_volume_size }}
       format: qcow2
       full: true
-      memoryMiB: "{{ .Values.controlplane.memory_mib }}"
+      memoryMiB: {{ .Values.controlplane.memory_mib }}
       network:
         default:
-          bridge: "{{ .Values.proxmox.vm.bridge }}"
+          bridge: {{ .Values.proxmox.vm.bridge }}
           model: virtio
-      numCores: "{{ .Values.controlplane.num_cores }}"
-      numSockets: "{{ .Values.controlplane.num_sockets }}"
+      numCores: {{ .Values.controlplane.num_cores }}
+      numSockets: {{ .Values.controlplane.num_sockets }}
       checks:
         skipCloudInitStatus: true
         skipQemuGuestAgent: true
