@@ -6,12 +6,12 @@ cluster:
   image: "factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.1"
 
 network:
-  ip_ranges: "[192.168.4.101-192.168.4.107]"
+  ip_ranges: [192.168.4.101-192.168.4.107]
   ip_prefix: "24"
   gateway: "192.168.4.1"
   bastion_host: "freyr"
   bastion_host_endpoint_ip: "192.168.1.80"
-  dns_servers: "[192.168.1.201]"
+  dns_servers: [192.168.1.201]
 
 controlplane:
   endpoint_ip: "192.168.4.100"
@@ -31,7 +31,7 @@ worker:
 proxmox:
   url: "https://proxmox:8006"
   token: "Token name"
-  allowed_nodes: "[venus]"
+  allowed_nodes: [venus]
   secret: "Token value"
   template:
     sourcenode: "venus"
