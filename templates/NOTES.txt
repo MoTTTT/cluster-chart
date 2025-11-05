@@ -1,1 +1,51 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
 Cluster API resources have been created in the {{ .Values.cluster.name }} namespace.
+
+To viw progress with the Cluster API provisioning:
+
+  $ clusterctl describe cluster {{ .Values.cluster.name }} -n {{ .Values.cluster.name }} --show-conditions all --show-templates --show-resourcesets --grouping=false --echo
+
+To extract talos configuration:
+
+1. First ensure kubectl context is configured for (the correct) management cluster
+
+To view the contexts already configured (in your ~/.kube/config file):
+
+  $ kubectl config get-contexts
+
+For example if your Management cluster is called "Management"
+
+  $ kubectl config use-context admin@Management
+
+2. Extract talos configuration file for the the target cluster: 
+
+  $ kubectl get secret --namespace {{ .Values.cluster.name }} {{ .Values.cluster.name }}-talosconfig -o jsonpath='{.data.talosconfig}' | base64 -d > {{ .Values.cluster.name }}-talosconfig
+
+3. Extract kubectl config file for the the target cluster.
+
+  $ kubectl get secret --namespace {{ .Values.cluster.name }} {{ .Values.cluster.name }}-kubeconfig -o jsonpath='{.data.value}' | base64 -d > {{ .Values.cluster.name }}-kubeconfig
+
+This step is optional, but will be required where the access configuration needs to be provided to a cluster owner, 
+or where a bastion server is used.
+
+If you are going to be accessing the kubernetes API for the target cluster via a bastion server, 
+it will be necessary to adjust the generated endpoint in the {{ .Values.cluster.name }}-kubeconfig file accordingly.
+
+4: Configure kubectl (i.e. your ~/.kube/config file) to include the context and credentials for the new cluster:
+
+  $ talosctl kubeconfig --nodes {{ .Values.controlplane.endpoint_ip }} --endpoints {{ .Values.controlplane.endpoint_ip }} --talosconfig=./{{ .Values.cluster.name }}-talosconfig
+
+This will set the kubectl context of the target cluster active.
+
+Tools like k9s can be used to watch the cluster pods provisioning, and view logs.
+
+Once your cluster stabilises, and the pods are all running, you can bootstrap your cluster for gitops.
+
+To bootstrap the cluster, add a secret to your cluster with the following (using the kubectl context of of the {{ .Values.cluster.name }} cluster):
+
+  $ flux create secret git flux-system --url=https://github.com/<username>/<Git repository name>.git  --username=<Git username>  --password=<Git token>
+
+The flux operator will pick up the secret and sync your cluster to your gitops repository.

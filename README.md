@@ -24,8 +24,8 @@ The chart supports the following CAPI providers, which need to be pre-installed 
 - kubectl installed, using management cluster context
 - clusterctl installation
 - Edit `~/.config/cluster-api/clusterctl.yaml` to match your Proxmox infrastructure, as described here: <https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/docs/Usage.md>
-- NOTE: Configuring Proxmox access credentials via the Helm chart is being replaced by use of the `capmox-manager-credentials` secret created in the `capmox-system` namespace at provider installation time.
 - Install providers: `clusterctl init --ipam in-cluster --core cluster-api -c talos -b talos -i proxmox`
+- Ensure the `capmox-manager-credentials` secret in the `capmox-system` namespace is present and correct in the Management Cluster.
 
 ### Usage
 

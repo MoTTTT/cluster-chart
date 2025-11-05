@@ -29,13 +29,14 @@ worker:
   memory_mib: 16384
 
 proxmox:
-  url: https://proxmox:8006
-  token: "Token name"
   allowed_nodes: [venus]
-  secret: "Token value"
   template:
     sourcenode: venus
     template_vmid: 100
   vm:
     boot_volume_device: virtio0
     bridge: vmbr0
+# Removed, to be added to cluster with 
+#  token: "Token name"
+#  secret: "Token value"
+#  url: https://proxmox:8006
