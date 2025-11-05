@@ -1,4 +1,10 @@
-# cluster-chart: A Helm chart to generate Cluster API managed Cluster manifests
+# cluster-chart: A Helm chart to generate Cluster API Cluster manifests
+
+The chart currently only supports the following components:
+
+- Proxmox hypervisor
+- Talos cluster provider
+- Talos bootstrap provider
 
 ## Requirement
 
@@ -11,7 +17,7 @@ An original Cluster API template could be used with `clusterctl` commands to gen
 - Manually adding the generated cluster manifest into a GitOps repo for a Cluster API management cluster, in order to provision a cluster.
 - Manual changes to generated manifests would then be used to scale clusters or modify configuration.
 
-This helm chart removes the necessity for management cluster access in order to provision new clusters, and adjust existing ones.
+This helm chart, used with gitops (tested with flux kustomizations), removes the necessity for management cluster access in order to provision new clusters, and adjust existing ones.
 
 The chart supports the following CAPI providers, which need to be pre-installed on your CAPI management cluster:
 
@@ -19,34 +25,27 @@ The chart supports the following CAPI providers, which need to be pre-installed 
 - Talos Cluster Provider
 - Talos Bootstrap Provider
 
-### Installation of Cluster API onto an existing cluster, creating a "Management Cluster"
+## Pre-requisites
 
-- kubectl installed, using management cluster context
-- clusterctl installation
-- Edit `~/.config/cluster-api/clusterctl.yaml` to match your Proxmox infrastructure, as described here: <https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/docs/Usage.md>
+- kubectl (Kubernetes command line tool)
+- clusterctl (Cluster API cluster management tool, used to install providers)
+- helm (Kubernetes package manager) required unless you are using server-side apply.
+- talosctl (Talos command line tool)
+- flux (GitOps tool) to connect your cluster to a gitops repo
+- Proxmox (Hypervisor). You will need a user token name, token value, and URL
+- Talos template vm created in your proxmox cluster.
+- Management Cluster: Any kubernetes cluster with network access to your hypervisor will do.
+
+### Configuration and Installation of Cluster API
+
+- Edit `~/.config/cluster-api/clusterctl.yaml` to match your Proxmox infrastructure
+- Reference: <https://github.com/ionos-cloud/cluster-api-provider-proxmox/blob/main/docs/Usage.md>
 - Install providers: `clusterctl init --ipam in-cluster --core cluster-api -c talos -b talos -i proxmox`
 - Ensure the `capmox-manager-credentials` secret in the `capmox-system` namespace is present and correct in the Management Cluster.
 
-### Usage
+## Values
 
-The following manifests templates are used to generate the manifests to provision a cluster using these CAPI providers:
-
-| Template                         | Object Kind created                        |
-|----------------------------------|--------------------------------------------|
-| cluster.yaml                     | CAPI Cluster                               |
-| machinedeployment.yaml           | CAPI MachineDeployment                     |
-| namespace.yaml                   | Namespace: Identical to the cluster name   |
-| NOTES.txt                        | Helm Release Notes                         |
-| proxmoxcluster.yaml              | ProxmoxCluster                             |
-| proxmoxmachinetemplate-cp.yaml   | ProxmoxMachineTemplate for Control Plane   |
-| proxmoxmachinetemplate-w.yaml    | ProxmoxMachineTemplate for Worker Nodes    |
-| secret.yaml (deprecated)         | capmox-manager-credentials Secret          |
-| talosconfigtemplate.yaml         | Talos machine patch                        |
-| taloscontrolplane.yaml           | Talos control plane patch                  |
-
-### Values
-
-The values used in the chart will need configuration to match your infrastructure.
+The values used in the chart will need configuration to match your requirements.
 
 | Value Name                        | Description                       | Default value                                                                                                  |
 |-----------------------------------|-----------------------------------|----------------------------------------------------------------------------------------------------------------|
@@ -70,22 +69,47 @@ The values used in the chart will need configuration to match your infrastructur
 | worker.num_cores                  | Worker cores                      | 4                                                                                                              |
 | worker.num_sockets                | Worker sockets                    | 4                                                                                                              |
 | worker.memory_mib                 | Worker memory                     | 16384                                                                                                          |
-| proxmox.url                       | Proxmox URL (deprecated)          | https://proxmox:8006                                                                                           |
-| proxmox.token                     | Proxmox Token (deprecated)        | Token name                                                                                                     |
 | proxmox.allowed_nodes             | Proxmox Allowed Nodes             | [venus]                                                                                                        |
-| proxmox.secret                    | Proxmox Secret  (deprecated)      | Token value                                                                                                    |
 | proxmox.template.sourcenode       | Proxmox Source Node               | venus                                                                                                          |
 | proxmox.template.template_vmid    | Proxmox Template VM ID            | 100                                                                                                            |
 | proxmox.vm.boot_volume_device     | Proxmox Boot Volume Device        | virtio0                                                                                                        |
 | proxmox.vm.bridge                 | Proxmox Bridge                    | vmbr0                                                                                                          |
 
-### Bastion server
+## Usage
 
-If the target cluster's kubernetes api server needs to be accessed indirectly, using an external hostname, IP Address or both, these can be added to the api certificates SAN.
+### Helm
 
-Best practice would be to avoid exposing the cluster's api endpoints externally, so the bastion server's ports should be set up for local access only.
 
-### References
+
+### Flux example
+
+
+
+## Manifest Templates
+
+The following manifests templates are used to generate the manifests to provision a cluster using these CAPI providers:
+
+| Template                         | Object Kind created                        |
+|----------------------------------|--------------------------------------------|
+| cluster.yaml                     | CAPI Cluster                               |
+| machinedeployment.yaml           | CAPI MachineDeployment                     |
+| namespace.yaml                   | Namespace: Identical to the cluster name   |
+| NOTES.txt                        | Helm Release Notes                         |
+| proxmoxcluster.yaml              | ProxmoxCluster                             |
+| proxmoxmachinetemplate-cp.yaml   | ProxmoxMachineTemplate for Control Plane   |
+| proxmoxmachinetemplate-w.yaml    | ProxmoxMachineTemplate for Worker Nodes    |
+| talosconfigtemplate.yaml         | Talos machine patch                        |
+| taloscontrolplane.yaml           | Talos control plane patch                  |
+
+## Networking considerations
+
+Bastion server entries in the values file can be used to add additional entries to SAN (Subject Alternative Name) of the kube api certificate.
+
+If the target cluster's kubernetes api server needs to be accessed indirectly, using an external hostname, IP Address or both, these can be added to the api certificates SAN, using values for `network.bastion_host` and `network.bastion_host_endpoint_ip`.
+
+Best practice would be to avoid exposing the cluster's api endpoints externally, so the bastion server's ports should be set up for local access only, using a VPN or similar solution if remote access to the target cluster api is specifically required.
+
+## References
 
 - <https://github.com/kubernetes-sigs/cluster-api>
 - <https://github.com/ionos-cloud/cluster-api-provider-proxmox>
