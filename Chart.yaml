@@ -10,5 +10,5 @@ apiVersion: v2
 name: cluster-chart
 description: A Helm chart to generate Cluster API managed Cluster manifests.
 type: application
-version: 0.1.5
+version: 0.1.6
 appVersion: "1.0.0"
