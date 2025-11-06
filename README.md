@@ -28,6 +28,8 @@ The chart supports the following CAPI providers, which need to be pre-installed 
 
 The values used in the chart will need configuration to match your requirements. Most of them are going to need attention.
 
+IP Address range defaults to 192.168.4.191-192.168.4.197, and Control plane VIP to 192.168.4.190.
+
 The default machine sizing is a single 16 CPU, 16 GB RAM, and 40GB DISK control plane node, and a single 16 CPU, 16 GB RAM, and 140GB DISK worker node.
 
 The default network uses 192.168.4.0/24 subnet, with a gateway of 192.168.4.1. The Gateway/Bastion server is available on an external network with IP address 192.168.1.80, and hostname "freyr".
@@ -39,13 +41,13 @@ The default Talos image is V1.11.1, NoCloud, amd64, with siderolabs/drbd, sidero
 | cluster.name                      | Cluster name                      | cluster09                                                                                                      |
 | cluster.version                   | Kubernetes version                | v1.32.0                                                                                                        |
 | cluster.image                     | Talos image                       | factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.1   |
-| network.ip_ranges                 | IP range for the cluster          | [192.168.4.101-192.168.4.107]                                                                                  |
+| network.ip_ranges                 | IP range for the cluster          | [192.168.4.191-192.168.4.197]                                                                                  |
 | network.ip_prefix                 | IP prefix for the cluster         | 24                                                                                                             |
 | network.gateway                   | Gateway for the cluster           | 192.168.4.1                                                                                                    |
 | network.bastion_host              | Bastion host                      | freyr                                                                                                          |
 | network.bastion_host_endpoint_ip  | Bastion host endpoint IP          | 192.168.1.80                                                                                                   |
 | network.dns_servers               | DNS servers                       | [192.168.1.201]                                                                                                |
-| controlplane.endpoint_ip          | Control plane IP                  | 192.168.4.100                                                                                                  |
+| controlplane.endpoint_ip          | Control plane IP                  | 192.168.4.190                                                                                                  |
 | controlplane.machine_count        | Control plane machines            | 1                                                                                                              |
 | controlplane.boot_volume_size     | Control plane boot volume size    | 40                                                                                                             |
 | controlplane.num_cores            | Control plane cores               | 4                                                                                                              |
