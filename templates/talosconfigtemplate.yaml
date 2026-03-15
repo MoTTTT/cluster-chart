@@ -3,9 +3,9 @@ apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
 kind: TalosConfigTemplate
 metadata:
   name: talosconfig-worker
-  namespace: "{{ .Values.cluster.name }}"
+  namespace: {{ .Values.cluster.name }}
   labels:
-    cluster-name: "{{ .Values.cluster.name }}"
+    cluster-name: {{ .Values.cluster.name }}
     {{- include "cluster-chart.labels" . | nindent 4 }}
 spec:
   template:
@@ -30,3 +30,7 @@ spec:
               extraArgs:
                 rotate-server-certificates: true
                 cloud-provider: external
+            {{- with .Values.registries }}
+            registries:
+            {{- toYaml . | nindent 14 }}
+            {{- end }}

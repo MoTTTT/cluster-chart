@@ -2,8 +2,8 @@
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
 kind: ProxmoxMachineTemplate
 metadata:
-  name: "{{ .Values.cluster.name }}-controlplane"
-  namespace: "{{ .Values.cluster.name }}"
+  name: {{ .Values.cluster.name }}-controlplane
+  namespace: {{ .Values.cluster.name }}
   labels:
     {{- include "cluster-chart.labels" . | nindent 4 }}
 spec:

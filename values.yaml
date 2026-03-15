@@ -1,9 +1,9 @@
-# Default values for cluster-chart: Cluster API managed cluster manifests.
+# Cluster API managed cluster manifests for Cluster 09: default values
 
 cluster:
   name: "cluster09"
-  kubernetes_version: v1.32.0
-  image: factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.1
+  kubernetes_version: v1.34.2
+  image: factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.5
 
 network:
   ip_ranges: [192.168.4.191-192.168.4.197]
@@ -12,7 +12,6 @@ network:
   bastion_host: freyr
   bastion_host_endpoint_ip: "192.168.1.80"
   dns_servers: [192.168.1.201]
-
 controlplane:
   endpoint_ip: "192.168.4.190"
   machine_count: 1
@@ -20,6 +19,12 @@ controlplane:
   num_cores: 4
   num_sockets: 4
   memory_mib: 16384
+  extra_manifests:
+    - http://192.168.4.1/cilium.yaml
+    - http://192.168.4.1/flux.yaml
+    - http://192.168.4.1/flux-instance-cluster09.yaml
+    - http://192.168.4.1/flux-secret.yaml
+    - http://192.168.4.1/gateway-api.yaml
 
 worker:
   machine_count: 1
@@ -36,7 +41,35 @@ proxmox:
   vm:
     boot_volume_device: virtio0
     bridge: vmbr0
-# Removed, to be added to cluster with 
-#  token: "Token name"
-#  secret: "Token value"
-#  url: https://proxmox:8006
+
+registries:
+  config:
+    192.168.4.100:
+      auth:
+        username: admin
+        password: Harbor12345
+  mirrors:
+    docker.io:
+      endpoints:
+        - http://192.168.4.100/v2/proxy-docker.io
+      overridePath: true
+    ghcr.io:
+      endpoints:
+        - http://192.168.4.100/v2/proxy-ghcr.io
+      overridePath: true
+    gcr.io:
+      endpoints:
+        - http://192.168.4.100/v2/proxy-gcr.io
+      overridePath: true
+    registry.k8s.io:
+      endpoints:
+        - http://192.168.4.100/v2/proxy-registry.k8s.io
+      overridePath: true
+    quay.io:
+      endpoints:
+        - http://192.168.4.100/v2/proxy-quay.io
+      overridePath: true
+    cr.fluentbit.io:
+      endpoints:
+        - http://192.168.4.100/v2/proxy-cr.fluentbit.io
+      overridePath: true
