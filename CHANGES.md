@@ -15,6 +15,10 @@
 
 ## Versions
 
+### V0.1.20
+
+- Parameterise ProxmoxMachineTemplate names: add `controlplane.machine_template_suffix` and `worker.machine_template_suffix` values (defaults: `controlplane`, `worker`). Enables hash-based template name generation in T-020 (ClusterSpec rolling update semantics).
+
 ### V0.1.19
 
 - Default Talos: v1.11.5; Kubernetes: v1.34.2

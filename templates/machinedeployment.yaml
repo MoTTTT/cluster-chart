@@ -23,6 +23,6 @@ spec:
       infrastructureRef:
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha1
         kind: ProxmoxMachineTemplate
-        name: {{ .Values.cluster.name }}-worker
+        name: {{ .Values.cluster.name }}-{{ .Values.worker.machine_template_suffix }}
         namespace: {{ .Values.cluster.name }}
       version: {{ .Values.cluster.kubernetes_version }}

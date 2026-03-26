@@ -15,6 +15,7 @@ network:
 controlplane:
   endpoint_ip: "192.168.4.190"
   machine_count: 1
+  machine_template_suffix: controlplane
   boot_volume_size: 40
   num_cores: 4
   num_sockets: 4
@@ -28,6 +29,7 @@ controlplane:
 
 worker:
   machine_count: 1
+  machine_template_suffix: worker
   boot_volume_size: 140
   num_cores: 4
   num_sockets: 4
