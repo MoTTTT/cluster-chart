@@ -3,6 +3,7 @@
 cluster:
   name: "cluster09"
   kubernetes_version: v1.34.2
+  talos_version: v1.11
   image: factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.5
 
 network:
@@ -45,33 +46,33 @@ proxmox:
     bridge: vmbr0
 
 registries:
-  config:
-    192.168.4.100:
-      auth:
-        username: admin
-        password: Harbor12345
+  # Nexus pull-through proxy at artefacts.podzone.cloud replaces Harbor (192.168.4.100)
+  # Proxy repos configured 2026-03-26 via Nexus REST API (all HTTP 201).
+  # Access is path-based via port 8081 — same overridePath: true pattern as Harbor.
+  # artefacts.podzone.cloud must resolve to the Nexus service external IP/hostname;
+  # HTTPRoute + DNS setup is a pending manual step (see docs/nexus-image-cache-migration.md).
   mirrors:
     docker.io:
       endpoints:
-        - http://192.168.4.100/v2/proxy-docker.io
+        - http://artefacts.podzone.cloud/repository/proxy-dockerhub
       overridePath: true
     ghcr.io:
       endpoints:
-        - http://192.168.4.100/v2/proxy-ghcr.io
+        - http://artefacts.podzone.cloud/repository/proxy-ghcr
       overridePath: true
     gcr.io:
       endpoints:
-        - http://192.168.4.100/v2/proxy-gcr.io
+        - http://artefacts.podzone.cloud/repository/proxy-gcr
       overridePath: true
     registry.k8s.io:
       endpoints:
-        - http://192.168.4.100/v2/proxy-registry.k8s.io
+        - http://artefacts.podzone.cloud/repository/proxy-k8s
       overridePath: true
     quay.io:
       endpoints:
-        - http://192.168.4.100/v2/proxy-quay.io
+        - http://artefacts.podzone.cloud/repository/proxy-quay
       overridePath: true
     cr.fluentbit.io:
       endpoints:
-        - http://192.168.4.100/v2/proxy-cr.fluentbit.io
+        - http://artefacts.podzone.cloud/repository/proxy-fluentbit
       overridePath: true

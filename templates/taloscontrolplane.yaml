@@ -17,7 +17,7 @@ spec:
   controlPlaneConfig:
     controlplane:
       generateType: controlplane
-      talosVersion: v1.10
+      talosVersion: {{ .Values.cluster.talos_version | default "v1.11" }}
       strategicPatches:
         - |
           machine:
