@@ -30,6 +30,7 @@ spec:
             install:
               disk: /dev/vda
               image: {{ .Values.cluster.image }}
+              wipe: true
             kernel:
               modules:
                 - name: drbd

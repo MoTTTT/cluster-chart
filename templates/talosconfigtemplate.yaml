@@ -18,6 +18,7 @@ spec:
             install:
               disk: /dev/vda
               image: {{ .Values.cluster.image }}
+              wipe: true
             sysctls:
               vm.max_map_count: 262144
             kernel:
