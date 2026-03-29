@@ -21,7 +21,9 @@ network:
   gateway: 192.168.4.1
   bastion_host: freyr
   bastion_host_endpoint_ip: "192.168.1.80"
-  dns_servers: [192.168.1.201]
+  dns_servers: [8.8.8.8, 8.8.4.4]
+  # Sites with internal DNS can override at cluster level, e.g.:
+  # dns_servers: [192.168.1.201, 8.8.8.8]
 controlplane:
   endpoint_ip: "192.168.4.190"
   machine_count: 1
