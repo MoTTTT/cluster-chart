@@ -5,6 +5,15 @@ cluster:
   kubernetes_version: v1.34.2
   talos_version: v1.11
   image: factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.5
+  # Public-facing hostnames — served via Cloudflare proxy/tunnel.
+  # Gateway listeners on port 80 HTTP; Cloudflare terminates TLS.
+  # Requires a Cloudflare DNS proxied A/CNAME record per hostname.
+  hostname: []
+  # Internal-only hostnames — not exposed publicly, no Cloudflare A records.
+  # Gateway listeners on port 443 HTTPS; TLS via lets-encrypt-dns01 ClusterIssuer.
+  # Wildcard cert covers *.internal.podzone.net (DNS-01, no hostname enumeration).
+  # DNS resolution via pfSense Unbound Host Overrides (internal clients only).
+  internalhost: []
 
 network:
   ip_ranges: [192.168.4.191-192.168.4.197]
