@@ -13,7 +13,8 @@ spec:
   controlPlaneEndpoint:
     host: {{ .Values.controlplane.endpoint_ip }}
     port: 6443
-  dnsServers: {{ .Values.network.dns_servers }}
+  dnsServers:
+    {{- toYaml .Values.network.dns_servers | nindent 4 }}
   ipv4Config:
     addresses: {{ .Values.network.ip_ranges }}
     gateway: {{ .Values.network.gateway }}
