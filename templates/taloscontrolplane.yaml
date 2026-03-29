@@ -25,7 +25,6 @@ spec:
               interfaces:
                 - deviceSelector:
                     physical: true
-                  dhcp: true
                   vip:
                     ip: {{ .Values.controlplane.endpoint_ip }}
             install:
