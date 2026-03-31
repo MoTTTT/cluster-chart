@@ -15,6 +15,12 @@
 
 ## Versions
 
+### V0.1.29
+
+- Wire `cluster.talos_version` into `talosVersion` field in TalosControlPlane and TalosConfigTemplate (was hardcoded `v1.10`).
+- Image tag derived from `cluster.talos_version` — strip version from `cluster.image`; templates render `image:talos_version`.
+- Default `talos_version` updated to `v1.11.5`.
+
 ### V0.1.20
 
 - Parameterise ProxmoxMachineTemplate names: add `controlplane.machine_template_suffix` and `worker.machine_template_suffix` values (defaults: `controlplane`, `worker`). Enables hash-based template name generation in T-020 (ClusterSpec rolling update semantics).

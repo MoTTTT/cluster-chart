@@ -17,7 +17,7 @@ spec:
   controlPlaneConfig:
     controlplane:
       generateType: controlplane
-      talosVersion: v1.10
+      talosVersion: {{ .Values.cluster.talos_version }}
       strategicPatches:
         - |
           machine:
@@ -29,7 +29,7 @@ spec:
                     ip: {{ .Values.controlplane.endpoint_ip }}
             install:
               disk: /dev/vda
-              image: {{ .Values.cluster.image }}
+              image: {{ .Values.cluster.image }}:{{ .Values.cluster.talos_version }}
               wipe: true
             kernel:
               modules:

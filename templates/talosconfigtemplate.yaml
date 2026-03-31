@@ -11,13 +11,13 @@ spec:
   template:
     spec:
       generateType: worker
-      talosVersion: v1.10
+      talosVersion: {{ .Values.cluster.talos_version }}
       strategicPatches:
         - |
           machine:
             install:
               disk: /dev/vda
-              image: {{ .Values.cluster.image }}
+              image: {{ .Values.cluster.image }}:{{ .Values.cluster.talos_version }}
               wipe: true
             sysctls:
               vm.max_map_count: 262144
