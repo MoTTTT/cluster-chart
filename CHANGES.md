@@ -15,6 +15,11 @@
 
 ## Versions
 
+### V0.1.31
+
+- Add `network.ntp_servers` value — rendered into `machine.time.servers` in TalosControlPlane and TalosConfigTemplate.
+- Default NTP servers: `216.239.35.0`, `216.239.35.4` (Google NTP — routable via internet masquerade, no DNS required).
+
 ### V0.1.30
 
 - `cluster.image` carries the full image URL including version tag — independent of `cluster.talos_version`.
