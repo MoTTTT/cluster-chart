@@ -29,7 +29,7 @@ spec:
                     ip: {{ .Values.controlplane.endpoint_ip }}
             install:
               disk: /dev/vda
-              image: {{ .Values.cluster.image }}:{{ .Values.cluster.talos_version }}
+              image: {{ .Values.cluster.image }}
               wipe: true
             kernel:
               modules:

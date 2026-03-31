@@ -17,7 +17,7 @@ spec:
           machine:
             install:
               disk: /dev/vda
-              image: {{ .Values.cluster.image }}:{{ .Values.cluster.talos_version }}
+              image: {{ .Values.cluster.image }}
               wipe: true
             sysctls:
               vm.max_map_count: 262144

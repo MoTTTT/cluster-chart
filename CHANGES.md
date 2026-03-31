@@ -15,6 +15,12 @@
 
 ## Versions
 
+### V0.1.30
+
+- `cluster.image` carries the full image URL including version tag — independent of `cluster.talos_version`.
+- `cluster.talos_version` is used only for the `talosVersion` field (major.minor, e.g. `v1.10`).
+- Default `talos_version` reverted to `v1.11`; default `image` restored to include `:v1.11.5` tag.
+
 ### V0.1.29
 
 - Wire `cluster.talos_version` into `talosVersion` field in TalosControlPlane and TalosConfigTemplate (was hardcoded `v1.10`).

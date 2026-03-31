@@ -3,8 +3,8 @@
 cluster:
   name: "cluster09"
   kubernetes_version: v1.34.2
-  talos_version: v1.11.5
-  image: factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b
+  talos_version: v1.11
+  image: factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.5
   # Public-facing hostnames — served via Cloudflare proxy/tunnel.
   # Gateway listeners on port 80 HTTP; Cloudflare terminates TLS.
   # Requires a Cloudflare DNS proxied A/CNAME record per hostname.
