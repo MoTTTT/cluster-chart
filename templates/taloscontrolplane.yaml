@@ -59,15 +59,6 @@ spec:
               certSANs:
                 - {{ .Values.network.bastion_host_endpoint_ip }}
                 - {{ .Values.network.bastion_host }}
-            # network:
-            #   cni:
-            #     name: none
-            # proxy:
-            #   disabled: true
-            # {{- with .Values.controlplane.extra_manifests }}
-            # extraManifests:
-            # {{- toYaml . | nindent 14 }}
-            # {{- end }}
             externalCloudProvider:
               enabled: true
               manifests:

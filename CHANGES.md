@@ -15,6 +15,10 @@
 
 ## Versions
 
+### V0.1.33
+
+- Remove cluster.network.cni, proxy.disabled, and extraManifests from TalosControlPlane entirely (not commented — Helm directives in block scalar comments cause invalid YAML output).
+
 ### V0.1.32
 
 - Revert NTP server override — remove network.ntp_servers from values and templates.
