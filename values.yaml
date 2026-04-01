@@ -22,7 +22,6 @@ network:
   bastion_host: freyr
   bastion_host_endpoint_ip: "192.168.1.80"
   dns_servers: [8.8.8.8, 8.8.4.4]
-  ntp_servers: [216.239.35.0, 216.239.35.4]
   # Sites with internal DNS can override at cluster level, e.g.:
   # dns_servers: [192.168.1.201, 8.8.8.8]
 controlplane:

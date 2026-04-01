@@ -15,6 +15,11 @@
 
 ## Versions
 
+### V0.1.32
+
+- Revert NTP server override — remove network.ntp_servers from values and templates.
+- Comment out cluster.network.cni, cluster.proxy.disabled, and cluster.extraManifests in TalosControlPlane — removes Cilium from the equation for network diagnostics.
+
 ### V0.1.31
 
 - Add `network.ntp_servers` value — rendered into `machine.time.servers` in TalosControlPlane and TalosConfigTemplate.

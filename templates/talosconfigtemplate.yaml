@@ -15,9 +15,6 @@ spec:
       strategicPatches:
         - |
           machine:
-            time:
-              servers:
-              {{- toYaml .Values.network.ntp_servers | nindent 16 }}
             install:
               disk: /dev/vda
               image: {{ .Values.cluster.image }}

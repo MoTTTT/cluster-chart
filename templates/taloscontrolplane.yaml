@@ -27,9 +27,6 @@ spec:
                     physical: true
                   vip:
                     ip: {{ .Values.controlplane.endpoint_ip }}
-            time:
-              servers:
-              {{- toYaml .Values.network.ntp_servers | nindent 16 }}
             install:
               disk: /dev/vda
               image: {{ .Values.cluster.image }}
@@ -62,15 +59,15 @@ spec:
               certSANs:
                 - {{ .Values.network.bastion_host_endpoint_ip }}
                 - {{ .Values.network.bastion_host }}
-            network:
-              cni:
-                name: none
-            proxy:
-              disabled: true
-            {{- with .Values.controlplane.extra_manifests }}
-            extraManifests:
-            {{- toYaml . | nindent 14 }}
-            {{- end }}
+            # network:
+            #   cni:
+            #     name: none
+            # proxy:
+            #   disabled: true
+            # {{- with .Values.controlplane.extra_manifests }}
+            # extraManifests:
+            # {{- toYaml . | nindent 14 }}
+            # {{- end }}
             externalCloudProvider:
               enabled: true
               manifests:
