@@ -15,6 +15,32 @@
 
 ## Versions
 
+### V0.1.33
+
+- Remove cluster.network.cni, proxy.disabled, and extraManifests from TalosControlPlane entirely (not commented — Helm directives in block scalar comments cause invalid YAML output).
+
+### V0.1.32
+
+- Revert NTP server override — remove network.ntp_servers from values and templates.
+- Comment out cluster.network.cni, cluster.proxy.disabled, and cluster.extraManifests in TalosControlPlane — removes Cilium from the equation for network diagnostics.
+
+### V0.1.31
+
+- Add `network.ntp_servers` value — rendered into `machine.time.servers` in TalosControlPlane and TalosConfigTemplate.
+- Default NTP servers: `216.239.35.0`, `216.239.35.4` (Google NTP — routable via internet masquerade, no DNS required).
+
+### V0.1.30
+
+- `cluster.image` carries the full image URL including version tag — independent of `cluster.talos_version`.
+- `cluster.talos_version` is used only for the `talosVersion` field (major.minor, e.g. `v1.10`).
+- Default `talos_version` reverted to `v1.11`; default `image` restored to include `:v1.11.5` tag.
+
+### V0.1.29
+
+- Wire `cluster.talos_version` into `talosVersion` field in TalosControlPlane and TalosConfigTemplate (was hardcoded `v1.10`).
+- Image tag derived from `cluster.talos_version` — strip version from `cluster.image`; templates render `image:talos_version`.
+- Default `talos_version` updated to `v1.11.5`.
+
 ### V0.1.20
 
 - Parameterise ProxmoxMachineTemplate names: add `controlplane.machine_template_suffix` and `worker.machine_template_suffix` values (defaults: `controlplane`, `worker`). Enables hash-based template name generation in T-020 (ClusterSpec rolling update semantics).
