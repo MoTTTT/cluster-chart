@@ -15,6 +15,24 @@
 
 ## Versions
 
+### V0.1.37
+
+- `cluster.name` default changed from `cluster09` to `YourNewCluster`; all cluster09-specific defaults removed.
+- `cluster.controlplaneScheduling` (default `true`) — renders `cluster.allowSchedulingOnControlPlanes: true` in the Talos MachineConfig patch. Suitable for single-node and dev/test clusters; disable for production multi-node.
+- `network.certSANs` default changed to `[]` (empty). API server cert SAN block is omitted entirely when empty. gitopsapi note added: must be set per cluster.
+- `worker.machine_count` default changed to `0` — single CP node with scheduling enabled is sufficient for dev/test.
+- `worker.boot_volume_size` default changed to `40` GB (was 140).
+- All values.yaml fields now have inline documentation comments.
+- `hostname` and `internalhost` comments updated: on-premise routing and NSP (Cloudflare) options described; podzone-specific references removed.
+- `network.ip_ranges` comment: notes cluster09 block is usable for vanilla test provisioning; gitopsapi should override for production.
+
+### V0.1.36
+
+- Add `registries.enabled` flag (default `false`) — registry mirrors are disabled in a vanilla install. No infrastructure-specific mirror config in default values.
+- `registries.mirrors` renders only when `registries.enabled: true`; template now emits `registries.mirrors` directly rather than the full `registries` object (prevents `enabled` field leaking into Talos MachineConfig).
+- Default `registries.mirrors` is empty (`{}`); commented example in values.yaml uses `artefacts.your.domain` placeholder, covering the standard proxy repos (docker.io, ghcr.io, gcr.io, registry.k8s.io, quay.io). Fluentbit mirror removed from example.
+- PROJ-025/T-007 (CC-147) registered: gitopsapi ClusterSpec — `observability.agent` (mutable) + `registryMirrors` (immutable) fields.
+
 ### V0.1.35
 
 - `vm.max_map_count`: hard-coded opinionated value `1048576` on all nodes unconditionally (was `262144`, was conditional on `storage: in-cluster`). Value suits all known use-cases including OpenSearch.

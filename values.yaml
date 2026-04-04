@@ -1,102 +1,142 @@
-# Cluster API managed cluster manifests for Cluster 09: default values
+# Cluster API managed cluster manifests — default values
+# Override per cluster in a cluster-specific values file, or via gitopsapi-generated values.
 
 cluster:
-  name: "cluster09"
+  # Unique cluster name. Used as the CAPI namespace and resource name prefix.
+  name: "YourNewCluster"
+  # Kubernetes version to deploy. Must be compatible with the installed CAPI + Talos providers.
   kubernetes_version: v1.34.2
+  # Talos major.minor version string (e.g. v1.11). Used in the talosVersion field.
   talos_version: v1.11
+  # Full Talos installer image URL including tag. Factory images encode the Talos system extension set.
+  # Generate at: https://factory.talos.dev — select extensions, copy the image URL.
   image: factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.5
-  # Public-facing hostnames — served via Cloudflare proxy/tunnel.
-  # Gateway listeners on port 80 HTTP; Cloudflare terminates TLS.
-  # Requires a Cloudflare DNS proxied A/CNAME record per hostname.
+
+  # Public-facing hostnames for this cluster's ingress.
+  # Gateway listeners on port 80 HTTP. TLS termination options:
+  #   - On-premise routing: configure your internet-facing load balancer / reverse proxy to
+  #     forward traffic to the cluster Gateway IP. Specify hostnames resolvable from the internet.
+  #   - Network Service Provider (e.g. Cloudflare): proxied A/CNAME records provide WAF,
+  #     DDoS protection, and TLS termination without exposing cluster IPs directly.
+  #     Recommended where no on-premise Web Application Firewall is available.
   hostname: []
-  # Internal-only hostnames — not exposed publicly, no Cloudflare A records.
-  # Gateway listeners on port 443 HTTPS; TLS via lets-encrypt-dns01 ClusterIssuer.
-  # Wildcard cert covers *.internal.podzone.net (DNS-01, no hostname enumeration).
-  # DNS resolution via pfSense Unbound Host Overrides (internal clients only).
+
+  # Internal-only hostnames — not exposed publicly.
+  # Gateway listeners on port 443 HTTPS; TLS issued via a DNS-01 ACME ClusterIssuer.
+  # DNS-01 allows wildcard certificates without enumerating hostnames.
+  # Clients resolve these names via internal DNS (e.g. a local resolver or split-horizon DNS).
+  # gitopsapi: internal DNS zone and wildcard cert issuer are site-specific — configure in ClusterSpec.
   internalhost: []
 
-# Capability flags — set at provision time; CNI is Tier 3 immutable, storage is Tier 2.
+  # Allow workload pods to be scheduled on control plane nodes.
+  # Enabled by default for single-node and small clusters. Disable for production multi-node clusters.
+  controlplaneScheduling: true
+
+# Capability flags — set at provision time.
 # cni: "" (default kube-proxy) | "cilium" (sets network.cni.name:none + proxy.disabled:true)
+# Tier 3 immutable — CNI type cannot be changed on a live cluster. Reprovision required.
 cni: ""
-# storage: "" (no in-cluster storage) | "in-cluster" (adds drbd kernel modules)
+# storage: "" (no in-cluster storage) | "in-cluster" (adds drbd kernel modules to all nodes)
+# Tier 2 — requires rolling node replacement to take effect.
 storage: ""
 
 machine:
-  # Install disk — /dev/vda for Proxmox virtio VMs, /dev/sda for physical/SATA
+  # Install disk device path. /dev/vda for Proxmox virtio VMs; /dev/sda for physical or SATA.
   installDisk: /dev/vda
 
 network:
+  # IP address pool allocated to this cluster's VMs by the IPAM provider.
+  # gitopsapi: use the cluster09 IP block (192.168.4.191-192.168.4.197) for vanilla test provisioning;
+  # override with a site-specific block for production clusters.
   ip_ranges: [192.168.4.191-192.168.4.197]
+  # Subnet prefix length for the cluster IP pool (e.g. 24 = /24 = 255.255.255.0).
   ip_prefix: 24
+  # Default gateway for cluster VMs.
   gateway: 192.168.4.1
+  # DNS servers for cluster VMs. Defaults to public resolvers.
+  # Override with site-local resolvers where internal DNS is required.
   dns_servers: [8.8.8.8, 8.8.4.4]
-  # Sites with internal DNS can override at cluster level, e.g.:
-  # dns_servers: [192.168.1.201, 8.8.8.8]
   # Additional SANs for the API server TLS certificate.
-  # Add IP addresses and hostnames for any external access endpoint (VPN gateway, jump host, etc.).
+  # Add IP addresses or hostnames for any external access endpoint (VPN gateway, jump host, etc.).
   # Long-term: direct VPN access to the cluster network removes the need for these.
-  certSANs:
-    - "192.168.1.80"
-    - freyr
+  # gitopsapi: must be set per cluster; no sensible default — leave empty for vanilla installs.
+  certSANs: []
 
 controlplane:
+  # VIP (virtual IP) address for the control plane endpoint. Must be within the cluster subnet
+  # but outside the ip_ranges pool (it is not allocated by IPAM — it floats across CP nodes).
   endpoint_ip: "192.168.4.190"
+  # Number of control plane nodes. Use 1 for dev/test, 3 for HA.
   machine_count: 1
+  # Suffix appended to the cluster name to form the ProxmoxMachineTemplate name.
   machine_template_suffix: controlplane
+  # Boot volume size in GB.
   boot_volume_size: 40
+  # vCPU allocation — num_sockets * num_cores = total vCPUs presented to the VM.
   num_cores: 4
   num_sockets: 4
+  # RAM in MiB.
   memory_mib: 16384
   # Manifests fetched and applied by the Talos external cloud provider at boot.
-  # The CCM manifest is required for cloud-provider: external kubelet flag to function.
+  # The CCM manifest is required for the cloud-provider: external kubelet flag to function.
   cloudProviderManifests:
     - https://raw.githubusercontent.com/siderolabs/talos-cloud-controller-manager/main/docs/deploy/cloud-controller-manager.yml
 
 worker:
-  machine_count: 1
+  # Worker node count. Default 0 — a single control plane node with scheduling enabled
+  # (cluster.controlplaneScheduling: true) is sufficient for dev/test clusters.
+  machine_count: 0
+  # Suffix appended to the cluster name to form the ProxmoxMachineTemplate name.
   machine_template_suffix: worker
-  boot_volume_size: 140
+  # Boot volume size in GB.
+  boot_volume_size: 40
+  # vCPU allocation — num_sockets * num_cores = total vCPUs presented to the VM.
   num_cores: 4
   num_sockets: 4
+  # RAM in MiB.
   memory_mib: 16384
 
 proxmox:
+  # Proxmox nodes eligible to host cluster VMs. CAPMOX schedules VMs across these nodes.
   allowed_nodes: [venus]
   template:
+    # Proxmox node that holds the VM template to clone from.
     sourcenode: venus
+    # VMID of the Talos VM template on sourcenode.
     template_vmid: 100
   vm:
+    # Proxmox disk device identifier for the boot volume (virtio0 for virtio-scsi).
     boot_volume_device: virtio0
+    # Proxmox bridge interface for VM network connectivity.
     bridge: vmbr0
 
 registries:
-  # Nexus pull-through proxy at artefacts.podzone.cloud replaces Harbor (192.168.4.100)
-  # Proxy repos configured 2026-03-26 via Nexus REST API (all HTTP 201).
-  # Access is path-based via port 8081 — same overridePath: true pattern as Harbor.
-  # artefacts.podzone.cloud must resolve to the Nexus service external IP/hostname;
-  # HTTPRoute + DNS setup is a pending manual step (see docs/nexus-image-cache-migration.md).
-  mirrors:
-    docker.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-dockerhub
-      overridePath: true
-    ghcr.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-ghcr
-      overridePath: true
-    gcr.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-gcr
-      overridePath: true
-    registry.k8s.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-k8s
-      overridePath: true
-    quay.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-quay
-      overridePath: true
-    cr.fluentbit.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-fluentbit
-      overridePath: true
+  # Registry mirrors — disabled by default. Enable and configure per cluster when a
+  # pull-through proxy is available. When enabled, Talos routes image pulls through
+  # the configured mirrors. Set via gitopsapi ClusterSpec (immutable — Tier 2).
+  #
+  # Example (replace artefacts.your.domain with your proxy hostname):
+  # enabled: true
+  # mirrors:
+  #   docker.io:
+  #     endpoints:
+  #       - http://artefacts.your.domain/repository/proxy-dockerhub
+  #     overridePath: true
+  #   ghcr.io:
+  #     endpoints:
+  #       - http://artefacts.your.domain/repository/proxy-ghcr
+  #     overridePath: true
+  #   gcr.io:
+  #     endpoints:
+  #       - http://artefacts.your.domain/repository/proxy-gcr
+  #     overridePath: true
+  #   registry.k8s.io:
+  #     endpoints:
+  #       - http://artefacts.your.domain/repository/proxy-k8s
+  #     overridePath: true
+  #   quay.io:
+  #     endpoints:
+  #       - http://artefacts.your.domain/repository/proxy-quay
+  #     overridePath: true
+  enabled: false
+  mirrors: {}

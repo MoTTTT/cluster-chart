@@ -33,9 +33,10 @@ spec:
                 cloud-provider: external
             sysctls:
               vm.max_map_count: 1048576
-            {{- with .Values.registries }}
+            {{- if .Values.registries.enabled }}
             registries:
-            {{- toYaml . | nindent 14 }}
+              mirrors:
+            {{- toYaml .Values.registries.mirrors | nindent 16 }}
             {{- end }}
           {{- if eq .Values.cni "cilium" }}
           cluster:
