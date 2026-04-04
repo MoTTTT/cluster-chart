@@ -2,20 +2,45 @@ Cluster API Cluster Provisioning helm chart: cluster-chart
 
 Thank you for installing {{ .Chart.Name }}. Your release is named {{ .Release.Name }}. Cluster API resources have been created in the {{ .Values.cluster.name }} namespace.
 
-To view progress with the Cluster API provisioning (run against the Management Cluster):
+---
+CLUSTER CONFIGURATION
+
+  Cluster name:         {{ .Values.cluster.name }}
+  Kubernetes version:   {{ .Values.cluster.kubernetes_version }}
+  Talos version:        {{ .Values.cluster.talos_version }}
+  Install disk:         {{ .Values.machine.installDisk }}
+  Control plane VIP:    {{ .Values.controlplane.endpoint_ip }}
+  Control plane nodes:  {{ .Values.controlplane.machine_count }}
+  Worker nodes:         {{ .Values.worker.machine_count }}
+  CNI:                  {{ if eq .Values.cni "cilium" }}Cilium (kube-proxy disabled, CNI:none){{ else }}default (kube-proxy){{ end }}
+  Storage:              {{ if eq .Values.storage "in-cluster" }}in-cluster (drbd modules enabled){{ else }}none{{ end }}
+
+  API server cert SANs:
+  {{- range .Values.network.certSANs }}
+    - {{ . }}
+  {{- end }}
+
+---
+CLUSTER STATUS
+
+To view provisioning progress (run against the Management Cluster):
   $ clusterctl describe cluster {{ .Values.cluster.name }} -n {{ .Values.cluster.name }} --show-conditions all --show-templates --show-resourcesets --grouping=false --echo
 
+---
+EXTRACTING CREDENTIALS
+
 To extract configuration secrets for the target cluster (run against the Management Cluster):
-  
+
   # Extract Talos configuration
   $ kubectl get secret --namespace {{ .Values.cluster.name }} {{ .Values.cluster.name }}-talosconfig -o jsonpath='{.data.talosconfig}' | base64 -d > {{ .Values.cluster.name }}-talosconfig
 
-  # Extract standard kubeconfig (Required for cluster owners or bastion access)
+  # Extract standard kubeconfig
   $ kubectl get secret --namespace {{ .Values.cluster.name }} {{ .Values.cluster.name }}-kubeconfig -o jsonpath='{.data.value}' | base64 -d > {{ .Values.cluster.name }}-kubeconfig
 
-NOTE: If accessing via a bastion server, edit {{ .Values.cluster.name }}-kubeconfig to point the 'server' field to your bastion/port or localhost:port if tunneling.
+  NOTE: If accessing via an external endpoint (VPN gateway, jump host), edit {{ .Values.cluster.name }}-kubeconfig
+  to point the 'server' field to your access endpoint or localhost:port if port-forwarding.
 
-To activate the context for the new cluster using Talos:
+To activate the Talos context for the new cluster:
   $ talosctl kubeconfig --nodes {{ .Values.controlplane.endpoint_ip }} --endpoints {{ .Values.controlplane.endpoint_ip }} --talosconfig=./{{ .Values.cluster.name }}-talosconfig
 
 ---
@@ -31,12 +56,10 @@ To view dmesg or service logs (e.g. machined):
 ---
 GITOPS BOOTSTRAP
 
-GitOps manifests (GitRepository and FluxInstance) are typically loaded automatically via Talos ExtraManifests. To complete the bootstrap, ensure the SOPS decryption key is available in the new cluster.
+GitOps (Flux) bootstrap is managed by gitopsapi — it runs automatically as part of the
+cluster provisioning flow after CAPI completes. No manual ExtraManifests step required.
 
-1. Add the SOPS age key (run against the target cluster):
+To add the SOPS age key for secret decryption (run against the target cluster):
   $ cat ~/.config/cluster-api/age.agekey | kubectl create secret generic sops-age --namespace=flux-system --from-file=age.agekey=/dev/stdin
 
 Flux will detect the key on the next reconciliation cycle and begin pulling workload kustomizations.
-
-
-

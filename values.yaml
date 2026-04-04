@@ -18,7 +18,7 @@ cluster:
 # Capability flags — set at provision time; CNI is Tier 3 immutable, storage is Tier 2.
 # cni: "" (default kube-proxy) | "cilium" (sets network.cni.name:none + proxy.disabled:true)
 cni: ""
-# storage: "" (no in-cluster storage) | "in-cluster" (adds drbd modules + vm.max_map_count sysctl)
+# storage: "" (no in-cluster storage) | "in-cluster" (adds drbd kernel modules)
 storage: ""
 
 machine:
@@ -29,11 +29,16 @@ network:
   ip_ranges: [192.168.4.191-192.168.4.197]
   ip_prefix: 24
   gateway: 192.168.4.1
-  bastion_host: freyr
-  bastion_host_endpoint_ip: "192.168.1.80"
   dns_servers: [8.8.8.8, 8.8.4.4]
   # Sites with internal DNS can override at cluster level, e.g.:
   # dns_servers: [192.168.1.201, 8.8.8.8]
+  # Additional SANs for the API server TLS certificate.
+  # Add IP addresses and hostnames for any external access endpoint (VPN gateway, jump host, etc.).
+  # Long-term: direct VPN access to the cluster network removes the need for these.
+  certSANs:
+    - "192.168.1.80"
+    - freyr
+
 controlplane:
   endpoint_ip: "192.168.4.190"
   machine_count: 1
@@ -42,12 +47,10 @@ controlplane:
   num_cores: 4
   num_sockets: 4
   memory_mib: 16384
-  extra_manifests:
-    - http://192.168.4.1/cilium.yaml
-    - http://192.168.4.1/flux.yaml
-    - http://192.168.4.1/flux-instance-cluster09.yaml
-    - http://192.168.4.1/flux-secret.yaml
-    - http://192.168.4.1/gateway-api.yaml
+  # Manifests fetched and applied by the Talos external cloud provider at boot.
+  # The CCM manifest is required for cloud-provider: external kubelet flag to function.
+  cloudProviderManifests:
+    - https://raw.githubusercontent.com/siderolabs/talos-cloud-controller-manager/main/docs/deploy/cloud-controller-manager.yml
 
 worker:
   machine_count: 1

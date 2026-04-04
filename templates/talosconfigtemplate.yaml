@@ -31,10 +31,8 @@ spec:
               extraArgs:
                 rotate-server-certificates: true
                 cloud-provider: external
-            {{- if eq .Values.storage "in-cluster" }}
             sysctls:
-              vm.max_map_count: 262144
-            {{- end }}
+              vm.max_map_count: 1048576
             {{- with .Values.registries }}
             registries:
             {{- toYaml . | nindent 14 }}

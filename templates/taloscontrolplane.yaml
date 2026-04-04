@@ -50,10 +50,8 @@ spec:
                   - os:reader
                 allowedKubernetesNamespaces:
                   - kube-system
-            {{- if eq .Values.storage "in-cluster" }}
             sysctls:
-              vm.max_map_count: 262144
-            {{- end }}
+              vm.max_map_count: 1048576
             {{- with .Values.registries }}
             registries:
             {{- toYaml . | nindent 14 }}
@@ -61,8 +59,7 @@ spec:
           cluster:
             apiServer:
               certSANs:
-                - {{ .Values.network.bastion_host_endpoint_ip }}
-                - {{ .Values.network.bastion_host }}
+              {{- toYaml .Values.network.certSANs | nindent 16 }}
             {{- if eq .Values.cni "cilium" }}
             network:
               cni:
@@ -73,4 +70,4 @@ spec:
             externalCloudProvider:
               enabled: true
               manifests:
-                - https://raw.githubusercontent.com/siderolabs/talos-cloud-controller-manager/main/docs/deploy/cloud-controller-manager.yml
+              {{- toYaml .Values.controlplane.cloudProviderManifests | nindent 16 }}
