@@ -58,9 +58,14 @@ spec:
             {{- toYaml .Values.registries.mirrors | nindent 16 }}
             {{- end }}
           cluster:
+            {{- if .Values.network.certSANs }}
             apiServer:
               certSANs:
               {{- toYaml .Values.network.certSANs | nindent 16 }}
+            {{- end }}
+            {{- if .Values.cluster.controlplaneScheduling }}
+            allowSchedulingOnControlPlanes: true
+            {{- end }}
             {{- if eq .Values.cni "cilium" }}
             network:
               cni:
