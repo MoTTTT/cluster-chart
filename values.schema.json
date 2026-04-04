@@ -1,0 +1,244 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cluster-chart values",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["cluster", "machine", "network", "controlplane", "worker", "proxmox"],
+  "properties": {
+    "cluster": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "kubernetes_version", "talos_version", "image"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique cluster name. Used as the CAPI namespace and resource name prefix."
+        },
+        "kubernetes_version": {
+          "type": "string",
+          "pattern": "^v[0-9]+\\.[0-9]+\\.?[0-9]*$",
+          "description": "Kubernetes version, e.g. v1.34.2"
+        },
+        "talos_version": {
+          "type": "string",
+          "pattern": "^v[0-9]+\\.[0-9]+$",
+          "description": "Talos major.minor version, e.g. v1.11"
+        },
+        "image": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Full Talos factory installer image URL including tag."
+        },
+        "hostname": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Public-facing ingress hostnames."
+        },
+        "internalhost": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Internal-only ingress hostnames."
+        },
+        "controlplaneScheduling": {
+          "type": "boolean",
+          "description": "Allow workload pods to schedule on control plane nodes."
+        }
+      }
+    },
+    "cni": {
+      "type": "string",
+      "enum": ["", "cilium"],
+      "description": "CNI selection. Tier 3 immutable — requires reprovision to change."
+    },
+    "storage": {
+      "type": "string",
+      "enum": ["", "in-cluster"],
+      "description": "Storage flag. Tier 2 — requires rolling node replacement to change."
+    },
+    "machine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["installDisk"],
+      "properties": {
+        "installDisk": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Install disk device path, e.g. /dev/vda or /dev/sda."
+        }
+      }
+    },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ip_ranges", "ip_prefix", "gateway", "dns_servers"],
+      "properties": {
+        "ip_ranges": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "IP address pool for cluster VMs."
+        },
+        "ip_prefix": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32,
+          "description": "Subnet prefix length."
+        },
+        "gateway": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Default gateway for cluster VMs."
+        },
+        "dns_servers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "DNS resolvers for cluster VMs."
+        },
+        "certSANs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Additional SANs for the API server TLS certificate."
+        }
+      }
+    },
+    "controlplane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["endpoint_ip", "machine_count"],
+      "properties": {
+        "endpoint_ip": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Control plane VIP — must be in subnet but outside ip_ranges."
+        },
+        "machine_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of control plane nodes. Minimum 1."
+        },
+        "machine_template_suffix": {
+          "type": "string",
+          "description": "Suffix for the ProxmoxMachineTemplate name."
+        },
+        "boot_volume_size": {
+          "type": "integer",
+          "minimum": 10,
+          "description": "Boot volume size in GB."
+        },
+        "num_cores": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "vCPU cores per socket."
+        },
+        "num_sockets": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "vCPU sockets."
+        },
+        "memory_mib": {
+          "type": "integer",
+          "minimum": 1024,
+          "description": "RAM in MiB."
+        },
+        "cloudProviderManifests": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Manifests applied by the Talos external cloud provider at boot."
+        }
+      }
+    },
+    "worker": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "machine_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of worker nodes. 0 = single-node cluster."
+        },
+        "machine_template_suffix": {
+          "type": "string",
+          "description": "Suffix for the worker ProxmoxMachineTemplate name."
+        },
+        "boot_volume_size": {
+          "type": "integer",
+          "minimum": 10,
+          "description": "Worker boot volume size in GB."
+        },
+        "num_cores": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Worker vCPU cores per socket."
+        },
+        "num_sockets": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Worker vCPU sockets."
+        },
+        "memory_mib": {
+          "type": "integer",
+          "minimum": 1024,
+          "description": "Worker RAM in MiB."
+        }
+      }
+    },
+    "proxmox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowed_nodes"],
+      "properties": {
+        "allowed_nodes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Proxmox nodes eligible to host cluster VMs."
+        },
+        "template": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sourcenode": {
+              "type": "string",
+              "description": "Proxmox node holding the Talos VM template."
+            },
+            "template_vmid": {
+              "type": "integer",
+              "minimum": 100,
+              "description": "VMID of the Talos VM template."
+            }
+          }
+        },
+        "vm": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "boot_volume_device": {
+              "type": "string",
+              "description": "Proxmox disk device for the boot volume."
+            },
+            "bridge": {
+              "type": "string",
+              "description": "Proxmox bridge interface for VM networking."
+            }
+          }
+        }
+      }
+    },
+    "registries": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable Talos registry mirrors."
+        },
+        "mirrors": {
+          "type": "object",
+          "description": "Mirror configuration map. See values.yaml example."
+        }
+      }
+    }
+  }
+}
