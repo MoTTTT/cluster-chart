@@ -16,22 +16,34 @@ spec:
         - |
           machine:
             install:
-              disk: /dev/vda
+              disk: {{ .Values.machine.installDisk }}
               image: {{ .Values.cluster.image }}
               wipe: true
-            sysctls:
-              vm.max_map_count: 262144
+            {{- if eq .Values.storage "in-cluster" }}
             kernel:
               modules:
                 - name: drbd
                   parameters:
                     - usermode_helper=disabled
                 - name: drbd_transport_tcp
+            {{- end }}
             kubelet:
               extraArgs:
                 rotate-server-certificates: true
                 cloud-provider: external
+            {{- if eq .Values.storage "in-cluster" }}
+            sysctls:
+              vm.max_map_count: 262144
+            {{- end }}
             {{- with .Values.registries }}
             registries:
             {{- toYaml . | nindent 14 }}
             {{- end }}
+          {{- if eq .Values.cni "cilium" }}
+          cluster:
+            network:
+              cni:
+                name: none
+            proxy:
+              disabled: true
+          {{- end }}

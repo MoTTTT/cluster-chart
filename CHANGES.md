@@ -15,6 +15,14 @@
 
 ## Versions
 
+### V0.1.34
+
+- Surface `machine.installDisk` to values.yaml (default `/dev/vda`); replaces hard-coded disk path in TalosControlPlane and TalosConfigTemplate.
+- Add `storage` capability flag: `""` (default, vanilla install) or `"in-cluster"` — conditionally renders drbd kernel modules (`drbd`, `drbd_transport_tcp`) and `vm.max_map_count: 262144` sysctl in both CP and worker patches.
+- Add `cni` capability flag: `""` (default kube-proxy) or `"cilium"` — conditionally renders `cluster.network.cni.name: none` + `cluster.proxy.disabled: true` in both CP and worker patches.
+- Both flags are Tier 3 (CNI) / Tier 2 (storage) immutable per the cluster mutability model — set at provision time via gitopsapi-generated values.yaml.
+- PROJ-025/T-002 + T-004 complete.
+
 ### V0.1.33
 
 - Remove cluster.network.cni, proxy.disabled, and extraManifests from TalosControlPlane entirely (not commented — Helm directives in block scalar comments cause invalid YAML output).

@@ -28,15 +28,17 @@ spec:
                   vip:
                     ip: {{ .Values.controlplane.endpoint_ip }}
             install:
-              disk: /dev/vda
+              disk: {{ .Values.machine.installDisk }}
               image: {{ .Values.cluster.image }}
               wipe: true
+            {{- if eq .Values.storage "in-cluster" }}
             kernel:
               modules:
                 - name: drbd
                   parameters:
                     - usermode_helper=disabled
                 - name: drbd_transport_tcp
+            {{- end }}
             kubelet:
               extraArgs:
                 rotate-server-certificates: true
@@ -48,8 +50,10 @@ spec:
                   - os:reader
                 allowedKubernetesNamespaces:
                   - kube-system
+            {{- if eq .Values.storage "in-cluster" }}
             sysctls:
               vm.max_map_count: 262144
+            {{- end }}
             {{- with .Values.registries }}
             registries:
             {{- toYaml . | nindent 14 }}
@@ -59,8 +63,14 @@ spec:
               certSANs:
                 - {{ .Values.network.bastion_host_endpoint_ip }}
                 - {{ .Values.network.bastion_host }}
+            {{- if eq .Values.cni "cilium" }}
+            network:
+              cni:
+                name: none
+            proxy:
+              disabled: true
+            {{- end }}
             externalCloudProvider:
               enabled: true
               manifests:
                 - https://raw.githubusercontent.com/siderolabs/talos-cloud-controller-manager/main/docs/deploy/cloud-controller-manager.yml
-

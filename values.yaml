@@ -15,6 +15,16 @@ cluster:
   # DNS resolution via pfSense Unbound Host Overrides (internal clients only).
   internalhost: []
 
+# Capability flags — set at provision time; CNI is Tier 3 immutable, storage is Tier 2.
+# cni: "" (default kube-proxy) | "cilium" (sets network.cni.name:none + proxy.disabled:true)
+cni: ""
+# storage: "" (no in-cluster storage) | "in-cluster" (adds drbd modules + vm.max_map_count sysctl)
+storage: ""
+
+machine:
+  # Install disk — /dev/vda for Proxmox virtio VMs, /dev/sda for physical/SATA
+  installDisk: /dev/vda
+
 network:
   ip_ranges: [192.168.4.191-192.168.4.197]
   ip_prefix: 24
