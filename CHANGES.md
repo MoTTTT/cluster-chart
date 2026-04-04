@@ -15,6 +15,11 @@
 
 ## Versions
 
+### V0.1.38
+
+- `values.schema.json` added — Helm validates types, required fields, and capability flag enums at install/upgrade/template time. Catches invalid `cni`/`storage` values, minimum machine counts, RAM/disk floors.
+- README fully rewritten: Features section; Quick Start (standalone, minimal dependencies); updated Values table; Capability Flags subsection; Networking section updated (bastion replaced by certSANs); Schema Validation section added.
+
 ### V0.1.37
 
 - `cluster.name` default changed from `cluster09` to `YourNewCluster`; all cluster09-specific defaults removed.
