@@ -70,33 +70,32 @@ proxmox:
     bridge: vmbr0
 
 registries:
-  # Nexus pull-through proxy at artefacts.podzone.cloud replaces Harbor (192.168.4.100)
-  # Proxy repos configured 2026-03-26 via Nexus REST API (all HTTP 201).
-  # Access is path-based via port 8081 — same overridePath: true pattern as Harbor.
-  # artefacts.podzone.cloud must resolve to the Nexus service external IP/hostname;
-  # HTTPRoute + DNS setup is a pending manual step (see docs/nexus-image-cache-migration.md).
-  mirrors:
-    docker.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-dockerhub
-      overridePath: true
-    ghcr.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-ghcr
-      overridePath: true
-    gcr.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-gcr
-      overridePath: true
-    registry.k8s.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-k8s
-      overridePath: true
-    quay.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-quay
-      overridePath: true
-    cr.fluentbit.io:
-      endpoints:
-        - http://artefacts.podzone.cloud/repository/proxy-fluentbit
-      overridePath: true
+  # Registry mirrors — disabled by default. Enable and configure per cluster when a
+  # pull-through proxy is available. When enabled, Talos routes image pulls through
+  # the configured mirrors. Set via gitopsapi ClusterSpec (immutable — Tier 2).
+  #
+  # Example (replace artefacts.your.domain with your proxy hostname):
+  # enabled: true
+  # mirrors:
+  #   docker.io:
+  #     endpoints:
+  #       - http://artefacts.your.domain/repository/proxy-dockerhub
+  #     overridePath: true
+  #   ghcr.io:
+  #     endpoints:
+  #       - http://artefacts.your.domain/repository/proxy-ghcr
+  #     overridePath: true
+  #   gcr.io:
+  #     endpoints:
+  #       - http://artefacts.your.domain/repository/proxy-gcr
+  #     overridePath: true
+  #   registry.k8s.io:
+  #     endpoints:
+  #       - http://artefacts.your.domain/repository/proxy-k8s
+  #     overridePath: true
+  #   quay.io:
+  #     endpoints:
+  #       - http://artefacts.your.domain/repository/proxy-quay
+  #     overridePath: true
+  enabled: false
+  mirrors: {}

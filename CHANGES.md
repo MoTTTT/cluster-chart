@@ -15,6 +15,13 @@
 
 ## Versions
 
+### V0.1.36
+
+- Add `registries.enabled` flag (default `false`) — registry mirrors are disabled in a vanilla install. No infrastructure-specific mirror config in default values.
+- `registries.mirrors` renders only when `registries.enabled: true`; template now emits `registries.mirrors` directly rather than the full `registries` object (prevents `enabled` field leaking into Talos MachineConfig).
+- Default `registries.mirrors` is empty (`{}`); commented example in values.yaml uses `artefacts.your.domain` placeholder, covering the standard proxy repos (docker.io, ghcr.io, gcr.io, registry.k8s.io, quay.io). Fluentbit mirror removed from example.
+- PROJ-025/T-007 (CC-147) registered: gitopsapi ClusterSpec — `observability.agent` (mutable) + `registryMirrors` (immutable) fields.
+
 ### V0.1.35
 
 - `vm.max_map_count`: hard-coded opinionated value `1048576` on all nodes unconditionally (was `262144`, was conditional on `storage: in-cluster`). Value suits all known use-cases including OpenSearch.
