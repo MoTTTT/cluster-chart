@@ -5,12 +5,14 @@ cluster:
   # Unique cluster name. Used as the CAPI namespace and resource name prefix.
   name: "YourNewCluster"
   # Kubernetes version to deploy. Must be compatible with the installed CAPI + Talos providers.
-  kubernetes_version: v1.34.2
-  # Talos major.minor version string (e.g. v1.11). Used in the talosVersion field.
-  talos_version: v1.11
+  kubernetes_version: v1.34.6
+  # Talos major.minor version string (e.g. v1.12). Used in the talosVersion field.
+  talos_version: v1.12
   # Full Talos installer image URL including tag. Factory images encode the Talos system extension set.
   # Generate at: https://factory.talos.dev — select extensions, copy the image URL.
-  image: factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.11.5
+  # This schematic (6adc7e7f...) includes: siderolabs/drbd, siderolabs/qemu-guest-agent.
+  # The drbd extension enables in-cluster storage (storage: in-cluster flag) without a custom image.
+  image: factory.talos.dev/nocloud-installer/6adc7e7fba27948460e2231e5272e88b85159da3f3db980551976bf9898ff64b:v1.12.6
 
   # Public-facing hostnames for this cluster's ingress.
   # Gateway listeners on port 80 HTTP. TLS termination options:

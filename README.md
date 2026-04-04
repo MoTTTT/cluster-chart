@@ -69,7 +69,7 @@ Create a `my-cluster.yaml` with the values specific to your environment. Only si
 cluster:
   name: my-cluster
   # Talos factory image URL for your hardware — generate at factory.talos.dev
-  image: factory.talos.dev/nocloud-installer/<your-schematic-id>:v1.11.5
+  image: factory.talos.dev/nocloud-installer/<your-schematic-id>:v1.12.6
 
 network:
   # IP pool for cluster VMs — must be within your LAN subnet and not in use
@@ -156,9 +156,9 @@ Default VM sizing: 4 sockets × 4 cores, 16 GB RAM, 40 GB boot volume.
 | Value | Description | Default |
 | --- | --- | --- |
 | `cluster.name` | Unique cluster name. Used as the CAPI namespace and resource name prefix. | `YourNewCluster` |
-| `cluster.kubernetes_version` | Kubernetes version to deploy. | `v1.34.2` |
-| `cluster.talos_version` | Talos major.minor version (e.g. `v1.11`). Used in the `talosVersion` field. | `v1.11` |
-| `cluster.image` | Full Talos factory installer image URL including tag. | factory.talos.dev image `v1.11.5` |
+| `cluster.kubernetes_version` | Kubernetes version to deploy. | `v1.34.6` |
+| `cluster.talos_version` | Talos major.minor version (e.g. `v1.12`). Used in the `talosVersion` field. | `v1.12` |
+| `cluster.image` | Full Talos factory installer image URL including tag. Default schematic includes drbd + qemu-guest-agent extensions. | factory.talos.dev image `v1.12.6` |
 | `cluster.hostname` | Public-facing ingress hostnames. See [Networking](#networking). | `[]` |
 | `cluster.internalhost` | Internal-only ingress hostnames. See [Networking](#networking). | `[]` |
 | `cluster.controlplaneScheduling` | Allow workloads to schedule on control plane nodes. | `true` |

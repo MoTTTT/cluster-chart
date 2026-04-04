@@ -15,6 +15,16 @@
 
 ## Versions
 
+### V0.1.39
+
+Baseline type approval set:
+
+- Default `cluster.kubernetes_version`: `v1.34.6` (was `v1.34.2`)
+- Default `cluster.talos_version`: `v1.12` (was `v1.11`)
+- Default `cluster.image` tag: `:v1.12.6` (was `:v1.11.5`); same schematic hash — includes siderolabs/drbd + siderolabs/qemu-guest-agent extensions.
+- Image comment updated: documents that the default schematic includes drbd, enabling `storage: in-cluster` without a custom image.
+- README values table updated to reflect new defaults.
+
 ### V0.1.38
 
 - `values.schema.json` added — Helm validates types, required fields, and capability flag enums at install/upgrade/template time. Catches invalid `cni`/`storage` values, minimum machine counts, RAM/disk floors.
