@@ -15,6 +15,23 @@
 
 ## Versions
 
+### V0.1.35
+
+- `vm.max_map_count`: hard-coded opinionated value `1048576` on all nodes unconditionally (was `262144`, was conditional on `storage: in-cluster`). Value suits all known use-cases including OpenSearch.
+- `network.certSANs`: new array value replaces `network.bastion_host` + `network.bastion_host_endpoint_ip`. Add any external access endpoint IPs/hostnames per cluster. Bastion terminology removed from chart.
+- `controlplane.cloudProviderManifests`: new array value surfaces the hard-coded external cloud provider manifest URL. Configurable per cluster.
+- `storage` flag comment updated: controls drbd kernel modules only (sysctl is now unconditional).
+- `controlplane.extra_manifests` removed from values.yaml (dead config since v0.1.33 removed ExtraManifests rendering).
+- NOTES.txt: removed bastion terminology; updated GitOps bootstrap section (gitopsapi manages bootstrap — no manual ExtraManifests step); added Cluster Configuration section.
+
+### V0.1.34
+
+- Surface `machine.installDisk` to values.yaml (default `/dev/vda`); replaces hard-coded disk path in TalosControlPlane and TalosConfigTemplate.
+- Add `storage` capability flag: `""` (default, vanilla install) or `"in-cluster"` — conditionally renders drbd kernel modules (`drbd`, `drbd_transport_tcp`) in both CP and worker patches.
+- Add `cni` capability flag: `""` (default kube-proxy) or `"cilium"` — conditionally renders `cluster.network.cni.name: none` + `cluster.proxy.disabled: true` in both CP and worker patches.
+- Both flags are Tier 3 (CNI) / Tier 2 (storage) immutable per the cluster mutability model — set at provision time via gitopsapi-generated values.yaml.
+- PROJ-025/T-002 + T-004 complete.
+
 ### V0.1.33
 
 - Remove cluster.network.cni, proxy.disabled, and extraManifests from TalosControlPlane entirely (not commented — Helm directives in block scalar comments cause invalid YAML output).
